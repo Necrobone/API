@@ -1,0 +1,23 @@
+webserver:
+  image: webdevops/php-nginx-dev:7.1
+  volumes:
+    - ./:/var/www
+  links:
+    - database
+  environment:
+    - WEB_DOCUMENT_ROOT=/var/www/public
+    - WEB_DOCUMENT_INDEX=index.php
+  ports:
+    - "80:80"
+
+database:
+  image: mysql:5.7
+  volumes:
+    - /var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=rindus
+    - MYSQL_USER=rindus
+    - MYSQL_PASSWORD=rindus
+  ports:
+    - "3306:3306"
