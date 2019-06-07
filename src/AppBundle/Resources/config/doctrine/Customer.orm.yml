@@ -1,0 +1,54 @@
+AppBundle\Entity\Customer:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\CustomerRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        firstName:
+            type: string
+            length: 255
+        lastName:
+            type: string
+            length: 255
+        email:
+            type: string
+            length: 255
+            unique: true
+        phone:
+            type: string
+            length: 255
+        addressLine1:
+            type: string
+            length: 255
+        addressLine2:
+            type: string
+            length: 255
+        city:
+            type: string
+            length: 255
+        state:
+            type: string
+            length: 255
+        postalCode:
+            type: string
+            length: 255
+        country:
+            type: string
+            length: 255
+        createdAt:
+            type: datetime_immutable
+        updatedAt:
+            type: datetime_immutable
+        oneToMany:
+            orders:
+                targetEntity: AppBundle\Entity\Order
+                mappedBy: customer
+                orderBy:
+                    orderDate: DESC
+                cascade: ["persist", "merge"]
+    lifecycleCallbacks: {  }

@@ -1,0 +1,30 @@
+AppBundle\Entity\Order:
+    type: entity
+    table: null
+    repositoryClass: AppBundle\Repository\OrderRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        orderDate:
+            type: datetime_immutable
+        shippedDate:
+            type: datetime_immutable
+        status:
+            type: string
+            length: 255
+        comments:
+            type: text
+        createdAt:
+            type: datetime_immutable
+        updatedAt:
+            type: datetime_immutable
+        manyToOne:
+            customer:
+                targetEntity: AppBundle\Entity\Customer
+                inversedBy: orders
+                cascade: ["persist", "merge"]
+    lifecycleCallbacks: {  }
