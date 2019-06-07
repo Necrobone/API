@@ -1,5 +1,6 @@
 webserver:
-  image: webdevops/php-nginx-dev:7.1
+  container_name: webserver
+  image: webdevops/php-nginx-dev:7.3
   volumes:
     - ./:/var/www
   links:
@@ -11,6 +12,7 @@ webserver:
     - "80:80"
 
 database:
+  container_name: database
   image: mysql:5.7
   volumes:
     - /var/lib/mysql
