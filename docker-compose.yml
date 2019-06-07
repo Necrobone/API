@@ -5,8 +5,8 @@ webserver:
   links:
     - database
   environment:
-    - WEB_DOCUMENT_ROOT=/var/www/public
-    - WEB_DOCUMENT_INDEX=index.php
+    - WEB_DOCUMENT_ROOT=/var/www/web
+    - WEB_DOCUMENT_INDEX=app_dev.php
   ports:
     - "80:80"
 
