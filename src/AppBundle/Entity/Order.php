@@ -3,13 +3,14 @@
 namespace AppBundle\Entity;
 
 use DateTimeImmutable;
+use JsonSerializable;
 
 /**
  * Class Order
  *
  * @package AppBundle\Entity
  */
-class Order
+class Order implements JsonSerializable
 {
     /**
      * @var int
@@ -153,6 +154,27 @@ class Order
     public function changeCustomer(Customer $customer): void
     {
         $this->customer = $customer;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id'          => $this->id,
+            'orderDate'   => $this->orderDate,
+            'shippedDate' => $this->shippedDate,
+            'status'      => $this->status,
+            'comments'    => $this->comments,
+            'customer'    => $this->customer,
+            'created_at'  => $this->createdAt,
+            'updated_at'  => $this->updatedAt,
+        ];
     }
 }
 

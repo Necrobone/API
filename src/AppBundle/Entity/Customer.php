@@ -4,13 +4,14 @@ namespace AppBundle\Entity;
 
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use JsonSerializable;
 
 /**
  * Class Customer
  *
  * @package AppBundle\Entity
  */
-class Customer
+class Customer implements JsonSerializable
 {
     /**
      * @var int
@@ -280,6 +281,33 @@ class Customer
     public function changeOrders(Collection $orders): void
     {
         $this->orders = $orders;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id'           => $this->id,
+            'firstName'    => $this->firstName,
+            'lastName'     => $this->lastName,
+            'email'        => $this->email,
+            'phone'        => $this->phone,
+            'addressLine1' => $this->addressLine1,
+            'addressLine2' => $this->addressLine2,
+            'city'         => $this->city,
+            'state'        => $this->state,
+            'postalCode'   => $this->postalCode,
+            'country'      => $this->country,
+            'orders'       => $this->orders,
+            'created_at'   => $this->createdAt,
+            'updated_at'   => $this->updatedAt,
+        ];
     }
 }
 

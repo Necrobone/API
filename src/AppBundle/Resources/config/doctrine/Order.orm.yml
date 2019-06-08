@@ -10,21 +10,21 @@ AppBundle\Entity\Order:
                 strategy: AUTO
     fields:
         orderDate:
-            type: datetime_immutable
+            type: datetime
         shippedDate:
-            type: datetime_immutable
+            type: datetime
         status:
             type: string
             length: 255
         comments:
             type: text
         createdAt:
-            type: datetime_immutable
+            type: datetime
         updatedAt:
-            type: datetime_immutable
-        manyToOne:
-            customer:
-                targetEntity: AppBundle\Entity\Customer
-                inversedBy: orders
-                cascade: ["persist", "merge"]
+            type: datetime
+    manyToOne:
+        customer:
+            targetEntity: AppBundle\Entity\Customer
+            inversedBy: orders
+            cascade: ["persist", "merge"]
     lifecycleCallbacks: {  }

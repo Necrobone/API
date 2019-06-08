@@ -41,14 +41,14 @@ AppBundle\Entity\Customer:
             type: string
             length: 255
         createdAt:
-            type: datetime_immutable
+            type: datetime
         updatedAt:
-            type: datetime_immutable
-        oneToMany:
-            orders:
-                targetEntity: AppBundle\Entity\Order
-                mappedBy: customer
-                orderBy:
-                    orderDate: DESC
-                cascade: ["persist", "merge"]
+            type: datetime
+    oneToMany:
+        orders:
+            targetEntity: AppBundle\Entity\Order
+            mappedBy: customer
+            orderBy:
+                orderDate: DESC
+            cascade: ["persist", "merge"]
     lifecycleCallbacks: {  }
