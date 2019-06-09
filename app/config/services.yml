@@ -48,3 +48,7 @@ services:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments:
             - AppBundle\Entity\User
+
+    api_key_authenticator:
+        class: AppBundle\Security\TokenAuthenticator
+        arguments: ["@router"]
