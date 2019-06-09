@@ -28,6 +28,7 @@ AppBundle\Entity\Customer:
         addressLine2:
             type: string
             length: 255
+            nullable: true
         city:
             type: string
             length: 255
@@ -45,8 +46,8 @@ AppBundle\Entity\Customer:
         updatedAt:
             type: datetime
     oneToMany:
-        orders:
-            targetEntity: AppBundle\Entity\Order
+        customerOrders:
+            targetEntity: AppBundle\Entity\CustomerOrder
             mappedBy: customer
             orderBy:
                 orderDate: DESC

@@ -5,10 +5,10 @@ namespace AppBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class OrderRepository
+ * Class CustomerOrderRepository
  *
  * @package AppBundle\Repository
  */
-class OrderRepository extends EntityRepository
+class CustomerOrderRepository extends EntityRepository
 {
 }

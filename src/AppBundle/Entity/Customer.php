@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -44,7 +46,7 @@ class Customer implements JsonSerializable
     private $addressLine1;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $addressLine2;
 
@@ -81,7 +83,51 @@ class Customer implements JsonSerializable
     /**
      * @var Collection
      */
-    private $orders;
+    private $customerOrders;
+
+    /**
+     * Customer constructor.
+     *
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $phone
+     * @param string $addressLine1
+     * @param string|null $addressLine2
+     * @param string $city
+     * @param string $state
+     * @param string $postalCode
+     * @param string $country
+     *
+     * @throws Exception
+     */
+    public function __construct(
+        string $firstName,
+        string $lastName,
+        string $email,
+        string $phone,
+        string $addressLine1,
+        ?string $addressLine2,
+        string $city,
+        string $state,
+        string $postalCode,
+        string $country
+    ) {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->email = $email;
+        $this->phone = $phone;
+        $this->addressLine1 = $addressLine1;
+        $this->addressLine2 = $addressLine2;
+        $this->city = $city;
+        $this->state = $state;
+        $this->postalCode = $postalCode;
+        $this->country = $country;
+
+        $this->customerOrders = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
 
     /**
      * @return int
@@ -172,17 +218,17 @@ class Customer implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function addressLine2(): string
+    public function addressLine2(): ?string
     {
         return $this->addressLine2;
     }
 
     /**
-     * @param string $addressLine2
+     * @param string|null $addressLine2
      */
-    public function changeAddressLine2(string $addressLine2): void
+    public function changeAddressLine2(?string $addressLine2): void
     {
         $this->addressLine2 = $addressLine2;
     }
@@ -270,17 +316,17 @@ class Customer implements JsonSerializable
     /**
      * @return Collection
      */
-    public function orders(): Collection
+    public function customerOrders(): Collection
     {
-        return $this->orders;
+        return $this->customerOrders;
     }
 
     /**
-     * @param Collection $orders
+     * @param Collection $customerOrders
      */
-    public function changeOrders(Collection $orders): void
+    public function changeCustomerOrders(Collection $customerOrders): void
     {
-        $this->orders = $orders;
+        $this->customerOrders = $customerOrders;
     }
 
     /**
@@ -293,20 +339,20 @@ class Customer implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'           => $this->id,
-            'firstName'    => $this->firstName,
-            'lastName'     => $this->lastName,
-            'email'        => $this->email,
-            'phone'        => $this->phone,
-            'addressLine1' => $this->addressLine1,
-            'addressLine2' => $this->addressLine2,
-            'city'         => $this->city,
-            'state'        => $this->state,
-            'postalCode'   => $this->postalCode,
-            'country'      => $this->country,
-            'orders'       => $this->orders,
-            'created_at'   => $this->createdAt,
-            'updated_at'   => $this->updatedAt,
+            'id'             => $this->id,
+            'firstName'      => $this->firstName,
+            'lastName'       => $this->lastName,
+            'email'          => $this->email,
+            'phone'          => $this->phone,
+            'addressLine1'   => $this->addressLine1,
+            'addressLine2'   => $this->addressLine2,
+            'city'           => $this->city,
+            'state'          => $this->state,
+            'postalCode'     => $this->postalCode,
+            'country'        => $this->country,
+            'customerOrders' => $this->customerOrders,
+            'created_at'     => $this->createdAt,
+            'updated_at'     => $this->updatedAt,
         ];
     }
 }

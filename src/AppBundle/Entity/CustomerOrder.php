@@ -6,11 +6,11 @@ use DateTimeImmutable;
 use JsonSerializable;
 
 /**
- * Class Order
+ * Class CustomerOrder
  *
  * @package AppBundle\Entity
  */
-class Order implements JsonSerializable
+class CustomerOrder implements JsonSerializable
 {
     /**
      * @var int

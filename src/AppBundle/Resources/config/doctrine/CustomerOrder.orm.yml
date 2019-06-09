@@ -1,7 +1,7 @@
-AppBundle\Entity\Order:
+AppBundle\Entity\CustomerOrder:
     type: entity
     table: null
-    repositoryClass: AppBundle\Repository\OrderRepository
+    repositoryClass: AppBundle\Repository\CustomerOrderRepository
     id:
         id:
             type: integer
@@ -25,6 +25,6 @@ AppBundle\Entity\Order:
     manyToOne:
         customer:
             targetEntity: AppBundle\Entity\Customer
-            inversedBy: orders
+            inversedBy: customerOrders
             cascade: ["persist", "merge"]
     lifecycleCallbacks: {  }
