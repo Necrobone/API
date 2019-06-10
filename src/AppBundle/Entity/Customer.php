@@ -322,11 +322,28 @@ class Customer implements JsonSerializable
     }
 
     /**
-     * @param Collection $customerOrders
+     * @param DateTimeImmutable $orderDate
+     * @param DateTimeImmutable $shippedDate
+     * @param string $status
+     * @param string $comments
+     *
+     * @throws Exception
      */
-    public function changeCustomerOrders(Collection $customerOrders): void
-    {
-        $this->customerOrders = $customerOrders;
+    public function addCustomerOrder(
+        DateTimeImmutable $orderDate,
+        DateTimeImmutable $shippedDate,
+        string $status,
+        string $comments
+    ): void {
+        $customerOrder = new CustomerOrder(
+            $orderDate,
+            $shippedDate,
+            $status,
+            $comments,
+            $this
+        );
+
+        $this->customerOrders->add($customerOrder);
     }
 
     /**

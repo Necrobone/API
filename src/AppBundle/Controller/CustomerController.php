@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Customer;
+use AppBundle\Entity\CustomerOrder;
 use AppBundle\Repository\CustomerRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -12,6 +14,7 @@ use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Constraints\Length;
@@ -68,9 +71,11 @@ class CustomerController extends AbstractFOSRestController
     {
         /** @var Customer $customer */
         $customer = $this->customerRepository->find($id);
+
         if (null === $customer) {
             return new View("Customer id not found", Response::HTTP_NOT_FOUND);
         }
+
         return $customer;
     }
 
@@ -160,6 +165,7 @@ class CustomerController extends AbstractFOSRestController
     {
         /** @var Customer $customer */
         $customer = $this->customerRepository->find($id);
+
         if (empty($customer)) {
             return new View("Customer not found", Response::HTTP_NOT_FOUND);
         } else {
@@ -175,7 +181,7 @@ class CustomerController extends AbstractFOSRestController
      *
      * @return View|object
      */
-    public function orders(int $id)
+    public function customerOrdersShow(int $id)
     {
         /** @var Customer $customer */
         $customer = $this->customerRepository->find($id);
@@ -183,6 +189,46 @@ class CustomerController extends AbstractFOSRestController
             return new View("Customer id not found", Response::HTTP_NOT_FOUND);
         }
         return $customer->customerOrders();
+    }
+
+    /**
+     * @Rest\Post("/customers/{id}/orders")
+     *
+     * @param int $id
+     * @param Request $request
+     *
+     * @return View
+     * @throws OptimisticLockException
+     * @throws Exception
+     */
+    public function customerOrdersStore(int $id, Request $request): View
+    {
+        /** @var Customer $customer */
+        $customer = $this->customerRepository->find($id);
+
+        if (null === $customer) {
+            return new View("Customer id not found", Response::HTTP_NOT_FOUND);
+        }
+
+        $violations = $this->validateCustomerOrder($request);
+
+        if (0 === $violations->count()) {
+            $customer->addCustomerOrder(
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->get('orderDate')),
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $request->get('shippedDate')),
+                $request->get('status'),
+                $request->get('comments')
+            );
+
+            $this->customerRepository->add($customer);
+
+            return new View("Customer Order Added Successfully", Response::HTTP_OK);
+        } else {
+            $firstError = $violations->get(0);
+            $message = $firstError->getPropertyPath() . ': ' . $firstError->getMessage();
+
+            return new View($message, Response::HTTP_NOT_ACCEPTABLE);
+        }
     }
 
     /**
@@ -267,6 +313,38 @@ class CustomerController extends AbstractFOSRestController
             'state'        => $string,
             'postalCode'   => $string,
             'country'      => $string,
+        ]);
+
+        return $validator->validate($request->request->all(), $constraint, $groups);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function validateCustomerOrder(Request $request): ConstraintViolationListInterface
+    {
+        $validator = Validation::createValidator();
+
+        $groups = new GroupSequence(['Default', 'custom']);
+
+        $string = [
+            new NotBlank(),
+            new Type(['type' => 'string']),
+            new Length(['max' => 255])
+        ];
+
+        $date = [
+            new NotBlank(),
+            new DateTime()
+        ];
+
+        $constraint = new Collection([
+            'orderDate'   => $date,
+            'shippedDate' => $date,
+            'status'      => $string,
+            'comments'    => $string,
         ]);
 
         return $validator->validate($request->request->all(), $constraint, $groups);

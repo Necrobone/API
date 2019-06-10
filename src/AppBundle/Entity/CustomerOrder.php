@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use DateTimeImmutable;
+use Exception;
 use JsonSerializable;
 
 /**
@@ -51,6 +52,34 @@ class CustomerOrder implements JsonSerializable
      * @var Customer
      */
     private $customer;
+
+    /**
+     * CustomerOrder constructor.
+     *
+     * @param DateTimeImmutable $orderDate
+     * @param DateTimeImmutable $shippedDate
+     * @param string $status
+     * @param string $comments
+     * @param Customer $customer
+     *
+     * @throws Exception
+     */
+    public function __construct(
+        DateTimeImmutable $orderDate,
+        DateTimeImmutable $shippedDate,
+        string $status,
+        string $comments,
+        Customer $customer
+    ) {
+        $this->orderDate = $orderDate;
+        $this->shippedDate = $shippedDate;
+        $this->status = $status;
+        $this->comments = $comments;
+        $this->customer = $customer;
+
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
 
     /**
      * @return int
@@ -177,4 +206,3 @@ class CustomerOrder implements JsonSerializable
         ];
     }
 }
-
