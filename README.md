@@ -1,77 +1,119 @@
-Symfony Standard Edition
+getnow & rindus Coding Task_PHP
 ========================
 
-**WARNING**: This distribution does not support Symfony 4. See the
-[Installing & Setting up the Symfony Framework][15] page to find a replacement
-that fits you best.
+Create a REST API Service using Symfony 3 that provides a simple order management system to be consumed. The service should provide two entities/resources to be stored in a MySQL database: customers and orders.
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+Implement as many CRUD REST Calls as possible in at least one of the resources but please call at worst the two different resources. Present and accepted the data in JSON format allowing also a secure communication, as using HTTP Basic authentication or other securiry measures.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+Please provide information about the decisions taken and how you would improve it in the future, especially concerning security and authentication.
 
-What's inside?
+Docker (Optional)
 --------------
 
-The Symfony Standard Edition is configured with the following defaults:
+Inside the directory you can run directly:
 
-  * An AppBundle you can use to start coding;
+`docker-compose up`
 
-  * Twig as the only configured template engine;
+You can access the webserver container running ngingx php 7.2 with:
 
-  * Doctrine ORM/DBAL;
+`docker exec -it --user application webserver bash`
 
-  * Swiftmailer;
+Also the database container running mysql 5.6 with:
 
-  * Annotations enabled for everything.
+`docker exec -it database bash`
 
-It comes pre-configured with the following bundles:
+Ports exposed:
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+* Web: 80
+* Database: 3306
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+Database:
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
+* rindus
 
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
+Users:
 
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
+* user: root
 
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
+* password: rindus
 
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
+* user: rindus
 
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
+* password: rindus
 
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
+Running the app
+--------------
 
-  * [**SensioGeneratorBundle**][13] (in dev env) - Adds code generation
-    capabilities
+Please remember to run in the command line interface:
 
-  * [**WebServerBundle**][14] (in dev env) - Adds commands for running applications
-    using the PHP built-in web server
+`composer install`
 
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
+Then you need to run the doctrine migrations in order to create the database:
 
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
+`php bin/console d:m:m`
 
-Enjoy!
+This will generate a few tables and a basic Auth user token that you can use in the REST Api.
 
-[1]:  https://symfony.com/doc/3.4/setup.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.4/doctrine.html
-[8]:  https://symfony.com/doc/3.4/templating.html
-[9]:  https://symfony.com/doc/3.4/security.html
-[10]: https://symfony.com/doc/3.4/email.html
-[11]: https://symfony.com/doc/3.4/logging.html
-[13]: https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html
-[14]: https://symfony.com/doc/current/setup/built_in_web_server.html
-[15]: https://symfony.com/doc/current/setup.html
+Testing the app
+--------------
+
+Entities:
+
+* Customer
+* CustomerOrders
+* User
+
+Header that need to be used in the requests (you can change the token for a valid user in the database):
+
+`X-AUTH-TOKEN:1eb6ea66-a6b9-466c-9692-c1e459745262`
+
+Endpoints:
+
+* GET localhost/customers
+---
+This endpoint will show a list of Customers with their CustomerOrders in JSON format.
+
+* GET localhost/customers/{id}
+---
+This endpoint will show a single Customer with his CustomerOrder in JSON format.
+
+* POST localhost/customers
+---
+This endpoint will store a single Customer in the database.
+`{
+    "firstName": "test",
+	"lastName":"test",
+	"email":"test3@test.com",
+	"phone":"test",
+	"addressLine1":"test",
+	"city":"test",
+	"state":"test",
+	"postalCode":"test",
+	"country":"test"
+}`
+
+* PUT localhost/customers/{id}
+---
+This endpoint will update a single Customer in the database.
+`{
+	"firstName":"test2",
+	"lastName": "test3"
+}`
+
+* DEL localhost/customers/{id}
+---
+This endpoint will destroy a single Customer with his CustomerOrders in the database.
+
+* GET localhost/customers/{id}/orders
+---
+This endpoint will show a list of CustomerOrders that belongs to the Customer ID.
+
+* POST localhost/customers/{id}/orders
+---
+This endpoint will store a CustomerOrder that belongs to the Customer ID.
+`{
+	"orderDate": "2019-06-10 00:00:00",
+	"shippedDate":"2019-06-11 00:00:00",
+	"status":"test",
+	"comments": "test"
+}`

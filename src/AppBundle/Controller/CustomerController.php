@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Customer;
 use AppBundle\Entity\CustomerOrder;
+use AppBundle\Repository\CustomerOrderRepository;
 use AppBundle\Repository\CustomerRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\OptimisticLockException;
@@ -35,15 +36,23 @@ class CustomerController extends AbstractFOSRestController
      * @var CustomerRepository
      */
     private $customerRepository;
+    /**
+     * @var CustomerOrderRepository
+     */
+    private $customerOrderRepository;
 
     /**
      * CustomerController constructor.
      *
      * @param CustomerRepository $customerRepository
+     * @param CustomerOrderRepository $customerOrderRepository
      */
-    public function __construct(CustomerRepository $customerRepository)
-    {
+    public function __construct(
+        CustomerRepository $customerRepository,
+        CustomerOrderRepository $customerOrderRepository
+    ) {
         $this->customerRepository = $customerRepository;
+        $this->customerOrderRepository = $customerOrderRepository;
     }
 
     /**
@@ -169,6 +178,12 @@ class CustomerController extends AbstractFOSRestController
         if (empty($customer)) {
             return new View("Customer not found", Response::HTTP_NOT_FOUND);
         } else {
+            // TODO: Transactions
+            /** @var CustomerOrder $customerOrder */
+            foreach ($customer->customerOrders() as $customerOrder) {
+                $this->customerOrderRepository->delete($customerOrder);
+            }
+
             $this->customerRepository->delete($customer);
             return new View("Customer Deleted Successfully", Response::HTTP_OK);
         }
