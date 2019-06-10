@@ -70,16 +70,17 @@ Header that need to be used in the requests (you can change the token for a vali
 Endpoints:
 
 * GET localhost/customers
----
+
 This endpoint will show a list of Customers with their CustomerOrders in JSON format.
 
 * GET localhost/customers/{id}
----
+
 This endpoint will show a single Customer with his CustomerOrder in JSON format.
 
 * POST localhost/customers
----
+
 This endpoint will store a single Customer in the database.
+
 `{
     "firstName": "test",
 	"lastName":"test",
@@ -93,24 +94,26 @@ This endpoint will store a single Customer in the database.
 }`
 
 * PUT localhost/customers/{id}
----
+
 This endpoint will update a single Customer in the database.
+
 `{
 	"firstName":"test2",
 	"lastName": "test3"
 }`
 
 * DEL localhost/customers/{id}
----
+
 This endpoint will destroy a single Customer with his CustomerOrders in the database.
 
 * GET localhost/customers/{id}/orders
----
+
 This endpoint will show a list of CustomerOrders that belongs to the Customer ID.
 
 * POST localhost/customers/{id}/orders
----
+
 This endpoint will store a CustomerOrder that belongs to the Customer ID.
+
 `{
 	"orderDate": "2019-06-10 00:00:00",
 	"shippedDate":"2019-06-11 00:00:00",
