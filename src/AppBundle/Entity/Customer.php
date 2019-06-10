@@ -330,6 +330,15 @@ class Customer implements JsonSerializable
     }
 
     /**
+     * @param $key
+     * @param $value
+     */
+    public function changeProperty($key, $value): void
+    {
+        $this->{$key} = $value;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,

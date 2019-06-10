@@ -1,0 +1,21 @@
+AppBundle\Entity\Customer:
+  properties:
+    firstName:
+      - NotBlank: ~
+    lastName:
+      - NotBlank: ~
+    email:
+      - NotBlank: ~
+      - Email: ~
+    phone:
+      - NotBlank: ~
+    addressLine1:
+      - NotBlank: ~
+    city:
+      - NotBlank: ~
+    state:
+      - NotBlank: ~
+    postalCode:
+      - NotBlank: ~
+    Country:
+      - NotBlank: ~

@@ -11,6 +11,15 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Optional;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validation;
 
 /**
  * Class CustomerController
@@ -76,34 +85,31 @@ class CustomerController extends AbstractFOSRestController
      */
     public function store(Request $request): View
     {
-        if (empty($request->get('firstName')) ||
-            empty($request->get('lastName')) ||
-            empty($request->get('email')) ||
-            empty($request->get('phone')) ||
-            empty($request->get('addressLine1')) ||
-            empty($request->get('city')) ||
-            empty($request->get('state')) ||
-            empty($request->get('postalCode')) ||
-            empty($request->get('country'))) {
-            return new View("Missing information", Response::HTTP_NOT_ACCEPTABLE);
+        $violations = $this->validateStore($request);
+
+        if (0 === $violations->count()) {
+            $customer = new Customer(
+                $request->get('firstName'),
+                $request->get('lastName'),
+                $request->get('email'),
+                $request->get('phone'),
+                $request->get('addressLine1'),
+                $request->get('addressLine2'),
+                $request->get('city'),
+                $request->get('state'),
+                $request->get('postalCode'),
+                $request->get('country')
+            );
+
+            $this->customerRepository->add($customer);
+
+            return new View("Customer Added Successfully", Response::HTTP_OK);
+        } else {
+            $firstError = $violations->get(0);
+            $message = $firstError->getPropertyPath() . ': ' . $firstError->getMessage();
+
+            return new View($message, Response::HTTP_NOT_ACCEPTABLE);
         }
-
-        $customer = new Customer(
-            $request->get('firstName'),
-            $request->get('lastName'),
-            $request->get('email'),
-            $request->get('phone'),
-            $request->get('addressLine1'),
-            $request->get('addressLine2'),
-            $request->get('city'),
-            $request->get('state'),
-            $request->get('postalCode'),
-            $request->get('country')
-        );
-
-        $this->customerRepository->add($customer);
-
-        return new View("Customer Added Successfully", Response::HTTP_OK);
     }
 
     /**
@@ -119,14 +125,26 @@ class CustomerController extends AbstractFOSRestController
     {
         /** @var Customer $customer */
         $customer = $this->customerRepository->find($id);
+
         if (empty($customer)) {
             return new View("Customer not found", Response::HTTP_NOT_FOUND);
-        } elseif ($request->get('firstName')) {
-            $customer->changeFirstName($request->get('firstName'));
-            $this->customerRepository->add($customer);
-            return new View("Customer Updated Successfully", Response::HTTP_OK);
         } else {
-            return new View("Nothing to update", Response::HTTP_NOT_ACCEPTABLE);
+            $violations = $this->validateUpdate($request);
+
+            if (0 === $violations->count()) {
+                foreach ($request->request->all() as $key => $value) {
+                    $customer->changeProperty($key, $value);
+                }
+
+                $this->customerRepository->add($customer);
+
+                return new View("Customer Updated Successfully", Response::HTTP_OK);
+            } else {
+                $firstError = $violations->get(0);
+                $message = $firstError->getPropertyPath() . ': ' . $firstError->getMessage();
+
+                return new View($message, Response::HTTP_NOT_ACCEPTABLE);
+            }
         }
     }
 
@@ -165,5 +183,92 @@ class CustomerController extends AbstractFOSRestController
             return new View("Customer id not found", Response::HTTP_NOT_FOUND);
         }
         return $customer->customerOrders();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function validateStore(Request $request): ConstraintViolationListInterface
+    {
+        $validator = Validation::createValidator();
+
+        $groups = new GroupSequence(['Default', 'custom']);
+
+        $string = [
+            new NotBlank(),
+            new Type(['type' => 'string']),
+            new Length(['max' => 255])
+        ];
+        $email = [
+            new NotBlank(),
+            new Email(),
+            new Length(['max' => 255])
+        ];
+        $addressLine2 = [
+            new Optional([
+                new NotBlank(),
+                new Type(['type' => 'string']),
+                new Length(['max' => 255])
+            ]),
+        ];
+
+        $constraint = new Collection([
+            'firstName'    => $string,
+            'lastName'     => $string,
+            'email'        => $email,
+            'phone'        => $string,
+            'addressLine1' => $string,
+            'addressLine2' => $addressLine2,
+            'city'         => $string,
+            'state'        => $string,
+            'postalCode'   => $string,
+            'country'      => $string,
+        ]);
+
+        return $validator->validate($request->request->all(), $constraint, $groups);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return ConstraintViolationListInterface
+     */
+    private function validateUpdate(Request $request): ConstraintViolationListInterface
+    {
+        $validator = Validation::createValidator();
+
+        $groups = new GroupSequence(['Default', 'custom']);
+
+        $string = [
+            new Optional([
+                new NotBlank(),
+                new Type(['type' => 'string']),
+                new Length(['max' => 255])
+            ]),
+        ];
+        $email = [
+            new Optional([
+                new NotBlank(),
+                new Email(),
+                new Length(['max' => 255])
+            ]),
+        ];
+
+        $constraint = new Collection([
+            'firstName'    => $string,
+            'lastName'     => $string,
+            'email'        => $email,
+            'phone'        => $string,
+            'addressLine1' => $string,
+            'addressLine2' => $string,
+            'city'         => $string,
+            'state'        => $string,
+            'postalCode'   => $string,
+            'country'      => $string,
+        ]);
+
+        return $validator->validate($request->request->all(), $constraint, $groups);
     }
 }
