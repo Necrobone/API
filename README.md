@@ -1,4 +1,4 @@
-getnow & rindus Coding Task_PHP
+Exercise
 ========================
 
 Create a REST API Service using Symfony 3 that provides a simple order management system to be consumed. The service should provide two entities/resources to be stored in a MySQL database: customers and orders.
@@ -29,17 +29,17 @@ Ports exposed:
 
 Database:
 
-* rindus
+* symfony
 
 Users:
 
 * user: root
 
-* password: rindus
+* password: symfony
 
-* user: rindus
+* user: symfony
 
-* password: rindus
+* password: symfony
 
 Running the app
 --------------
